@@ -1,5 +1,8 @@
 package se.magnus.microservices.composite.product.services;
 
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
+
 import static org.springframework.http.HttpMethod.GET;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -67,19 +71,18 @@ public class ProductCompositeIntegration implements ProductService, Recommendati
       return product;
 
     } catch (HttpClientErrorException ex) {
+      HttpStatusCode statusCode = ex.getStatusCode();
 
-      switch (ex.getStatusCode()) {
-        case NOT_FOUND:
-          throw new NotFoundException(getErrorMessage(ex));
-
-        case UNPROCESSABLE_ENTITY:
-          throw new InvalidInputException(getErrorMessage(ex));
-
-        default:
-          LOG.warn("Got an unexpected HTTP error: {}, will rethrow it", ex.getStatusCode());
-          LOG.warn("Error body: {}", ex.getResponseBodyAsString());
-          throw ex;
+      if (statusCode.equals(NOT_FOUND)) {
+        throw new NotFoundException(getErrorMessage(ex));
+      } else if (statusCode.equals(UNPROCESSABLE_ENTITY)) {
+        throw new InvalidInputException(getErrorMessage(ex));
+      } else {
+        LOG.warn("Got an unexpected HTTP error: {}, will rethrow it", ex.getStatusCode());
+        LOG.warn("Error body: {}", ex.getResponseBodyAsString());
+        throw ex;
       }
+
     }
   }
 
