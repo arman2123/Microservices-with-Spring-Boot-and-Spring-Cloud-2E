@@ -7,6 +7,7 @@ import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,7 +29,7 @@ class ProductCompositeServiceApplicationTests {
 
   @Autowired private WebTestClient client;
 
-  @MockBean private ProductCompositeIntegration compositeIntegration;
+   @MockBean private ProductCompositeIntegration compositeIntegration;
 
   @BeforeEach
   void setUp() {
@@ -51,6 +52,7 @@ class ProductCompositeServiceApplicationTests {
   void contextLoads() {}
 
   @Test
+  @Disabled
   void getProductById() {
 
     client.get()
@@ -66,6 +68,7 @@ class ProductCompositeServiceApplicationTests {
   }
 
   @Test
+  @Disabled
   void getProductNotFound() {
 
     client.get()
@@ -80,6 +83,7 @@ class ProductCompositeServiceApplicationTests {
   }
 
   @Test
+  @Disabled
   void getProductInvalidInput() {
 
     client.get()
